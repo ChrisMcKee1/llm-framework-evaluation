@@ -121,11 +121,11 @@ graph LR
     C --> D[4. Multi-Agent Systems]
     D --> E[5. Production Patterns]
     
-    A --> F[Chat Completions<br>Prompt Management]
-    B --> G[LCEL vs Kernel<br>Orchestration]
-    C --> H[Function Calling<br>Agent Capabilities]
-    D --> I[LangGraph vs<br>Agent Framework]
-    E --> J[Error Handling<br>Scalability]
+    A --> F["Chat Completions & Prompt Management"]
+    B --> G["LCEL vs Kernel Orchestration"]
+    C --> H["Function Calling & Agent Capabilities"]
+    D --> I["LangGraph vs Agent Framework"]
+    E --> J["Error Handling & Scalability"]
 ```
 
 ### Advanced Patterns Covered
