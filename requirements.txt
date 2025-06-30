@@ -1,0 +1,28 @@
+# Core AI Framework Dependencies
+langchain-openai>=0.1.0          # LangChain Azure OpenAI integration
+semantic-kernel>=1.0.0           # Microsoft Semantic Kernel
+langchain-community>=0.2.0       # LangChain community tools and integrations
+langchain-core>=0.2.0            # LangChain core components
+langchain>=0.2.0                 # LangChain main package
+
+# Search and Tool Dependencies
+tavily-python>=0.3.0            # Tavily search API for agents
+
+# Environment and Configuration
+python-dotenv>=1.0.0            # Environment variable management
+
+# Jupyter and Notebook Dependencies
+jupyter>=1.0.0                  # Jupyter notebook environment
+jupyterlab>=4.0.0               # JupyterLab interface
+ipykernel>=6.25.0               # Jupyter kernel for Python
+
+# Azure Dependencies
+azure-identity>=1.15.0          # Azure Active Directory authentication (optional)
+
+# Development and Formatting
+black>=23.0.0                   # Python code formatter
+flake8>=6.0.0                   # Python linting
+
+# Additional Utilities
+requests>=2.31.0                # HTTP requests
+numpy>=1.24.0                   # Numerical computing (often required by AI frameworks)
