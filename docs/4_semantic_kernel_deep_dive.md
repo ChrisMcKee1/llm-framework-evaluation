@@ -185,18 +185,42 @@ kernel.add_plugin(MathPlugin(), "Math")
 async def create_marketing_workflow():
     # Step 1: Company name generation
     name_prompt = "What is a good name for a company that makes {{$input}}?"
-    name_function = kernel.create_function_from_prompt(
+    from semantic_kernel.prompt_template import PromptTemplateConfig, InputVariable
+    from semantic_kernel.functions import KernelArguments
+    
+    name_config = PromptTemplateConfig(
+        template=name_prompt,
+        name="generate_name",
+        template_format="semantic-kernel",
+        input_variables=[
+            InputVariable(name="input", description="The product description", is_required=True),
+        ],
+        execution_settings=config.create_execution_settings()
+    )
+    
+    name_function = kernel.add_function(
         function_name="generate_name",
-        plugin_name="MarketingPlugin", 
-        prompt=name_prompt
+        plugin_name="MarketingPlugin",
+        prompt_template_config=name_config
     )
     
     # Step 2: Catchphrase generation  
     catchphrase_prompt = "Write a creative catchphrase for the company: {{$input}}"
-    catchphrase_function = kernel.create_function_from_prompt(
+    
+    catchphrase_config = PromptTemplateConfig(
+        template=catchphrase_prompt,
+        name="generate_catchphrase", 
+        template_format="semantic-kernel",
+        input_variables=[
+            InputVariable(name="input", description="The company name", is_required=True),
+        ],
+        execution_settings=config.create_execution_settings()
+    )
+    
+    catchphrase_function = kernel.add_function(
         function_name="generate_catchphrase",
         plugin_name="MarketingPlugin",
-        prompt=catchphrase_prompt
+        prompt_template_config=catchphrase_config
     )
     
     # Sequential orchestration
@@ -205,13 +229,13 @@ async def create_marketing_workflow():
         
         # Step 1: Generate company name
         print("\\n🔗 Step 1: Generating company name...")
-        name_result = await kernel.invoke(name_function, sk.KernelArguments(input=product))
+        name_result = await kernel.invoke(name_function, KernelArguments(input=product))
         company_name = str(name_result).strip()
         print(f"Generated name: {company_name}")
         
         # Step 2: Generate catchphrase
         print("\\n🔗 Step 2: Generating catchphrase...")
-        catchphrase_result = await kernel.invoke(catchphrase_function, sk.KernelArguments(input=company_name))
+        catchphrase_result = await kernel.invoke(catchphrase_function, KernelArguments(input=company_name))
         catchphrase = str(catchphrase_result).strip()
         print(f"Generated catchphrase: {catchphrase}")
         
@@ -485,6 +509,332 @@ async def demonstrate_function_calling():
 # Execute function calling demonstration
 await demonstrate_function_calling()
 ```
+
+## 4.6.2 Native Function Plugins with @kernel_function Decorator
+
+Semantic Kernel's strength lies in its native function plugin architecture, where Python classes use the `@kernel_function` decorator to create discoverable, type-safe functions that AI can automatically understand and invoke.
+
+```python
+from typing import Annotated
+from semantic_kernel.functions import kernel_function, KernelArguments
+import random
+import json
+from datetime import datetime, timedelta
+
+class AdvancedMathPlugin:
+    """Enterprise-ready mathematical operations with rich metadata"""
+    
+    @kernel_function(
+        description="Generate cryptographically secure random numbers for simulations",
+        name="GenerateSecureRandom"
+    )
+    def generate_secure_random(
+        self, 
+        min_val: Annotated[int, "Minimum value (inclusive)"] = 1, 
+        max_val: Annotated[int, "Maximum value (inclusive)"] = 100,
+        seed: Annotated[int, "Optional seed for reproducibility"] = None
+    ) -> Annotated[str, "Secure random number as string"]:
+        """Generate cryptographically secure random numbers with optional seeding"""
+        try:
+            if seed:
+                random.seed(seed)
+            result = random.SystemRandom().randint(min_val, max_val)
+            return str(result)
+        except ValueError as e:
+            return f"Error: Invalid range - {e}"
+    
+    @kernel_function(
+        description="Calculate advanced statistical metrics for business analytics",
+        name="CalculateStatistics"
+    )
+    def calculate_statistics(
+        self, 
+        values: Annotated[str, "Comma-separated numeric values"],
+        metric: Annotated[str, "Statistic to calculate: mean, median, mode, stddev"] = "mean"
+    ) -> Annotated[str, "Calculated statistic with formatting"]:
+        """Calculate various statistical metrics with error handling"""
+        try:
+            nums = [float(x.strip()) for x in values.split(',')]
+            if not nums:
+                return "Error: No valid numbers provided"
+            
+            if metric.lower() == "mean":
+                result = sum(nums) / len(nums)
+                return f"Mean: {result:.2f}"
+            elif metric.lower() == "median":
+                sorted_nums = sorted(nums)
+                n = len(sorted_nums)
+                median = sorted_nums[n//2] if n % 2 else (sorted_nums[n//2-1] + sorted_nums[n//2]) / 2
+                return f"Median: {median:.2f}"
+            else:
+                return f"Statistic '{metric}' not implemented"
+        except Exception as e:
+            return f"Error calculating {metric}: {e}"
+
+class EnterpriseDataPlugin:
+    """Production-ready data processing with validation and error handling"""
+    
+    @kernel_function(
+        description="Advanced JSON processing with schema validation and nested extraction",
+        name="ProcessJsonAdvanced"
+    )
+    def process_json_advanced(
+        self, 
+        json_data: Annotated[str, "JSON string to process"], 
+        operation: Annotated[str, "Operation: extract, validate, transform, count"],
+        target: Annotated[str, "Target field or schema definition"] = ""
+    ) -> Annotated[str, "Processed result or error details"]:
+        """Advanced JSON processing with multiple operation modes"""
+        try:
+            data = json.loads(json_data)
+            
+            if operation.lower() == "extract":
+                # Support nested field extraction with dot notation
+                if '.' in target:
+                    keys = target.split('.')
+                    result = data
+                    for key in keys:
+                        if isinstance(result, dict) and key in result:
+                            result = result[key]
+                        else:
+                            return f"Path '{target}' not found in JSON"
+                    return str(result)
+                else:
+                    return str(data.get(target, f"Field '{target}' not found"))
+            
+            elif operation.lower() == "count":
+                if target == "keys":
+                    return str(len(data)) if isinstance(data, dict) else "Error: Not a JSON object"
+                elif target == "values":
+                    return str(len(data.values())) if isinstance(data, dict) else str(len(data))
+                else:
+                    return "Specify 'keys' or 'values' for count operation"
+            
+            elif operation.lower() == "validate":
+                # Basic validation - check if required fields exist
+                required_fields = target.split(',') if target else []
+                missing = [field.strip() for field in required_fields if field.strip() not in data]
+                return "Valid" if not missing else f"Missing fields: {missing}"
+            
+            else:
+                return f"Operation '{operation}' not supported"
+                
+        except json.JSONDecodeError as e:
+            return f"Invalid JSON: {e}"
+        except Exception as e:
+            return f"Processing error: {e}"
+
+# Register advanced plugins with enhanced metadata
+advanced_math = kernel.add_plugin(AdvancedMathPlugin(), "AdvancedMath")
+enterprise_data = kernel.add_plugin(EnterpriseDataPlugin(), "EnterpriseData")
+
+print("🔧 Advanced Native Plugins Registered:")
+for plugin_name, plugin in [("AdvancedMath", advanced_math), ("EnterpriseData", enterprise_data)]:
+    print(f"  📦 {plugin_name}:")
+    for func_name, func in plugin.functions.items():
+        print(f"    • {func_name}: {func.description}")
+        # Display parameter metadata
+        if hasattr(func, 'metadata') and func.metadata.parameters:
+            for param in func.metadata.parameters:
+                print(f"      - {param.name} ({param.type_}): {param.description}")
+```
+
+**Key Benefits of @kernel_function Architecture:**
+
+- **🔍 AI Discoverability**: Rich metadata helps AI understand function capabilities
+- **🛡️ Type Safety**: Python type hints provide compile-time validation  
+- **📚 Self-Documentation**: Descriptions and annotations create living documentation
+- **🔄 Reusability**: Plugin classes can be instantiated across multiple kernels
+- **⚡ Performance**: Native Python execution with minimal overhead
+
+## 4.6.3 Advanced Function Choice Behavior Patterns
+
+Semantic Kernel's `FunctionChoiceBehavior` provides enterprise-grade control over when and how AI models invoke functions, enabling precise orchestration for production applications.
+
+```python
+from semantic_kernel.connectors.ai import FunctionChoiceBehavior
+from semantic_kernel.connectors.ai.function_choice_behavior import FunctionChoiceBehaviorOptions
+
+class FunctionCallOrchestrator:
+    """Advanced function calling orchestration for enterprise applications"""
+    
+    def __init__(self, kernel, service_id):
+        self.kernel = kernel
+        self.service_id = service_id
+        self.chat_service = kernel.get_service(service_id)
+    
+    async def demonstrate_auto_behavior(self):
+        """AUTO: Maximum flexibility - AI chooses best functions"""
+        print("🤖 AUTO Function Choice Behavior")
+        
+        settings = AzureChatPromptExecutionSettings(
+            service_id=self.service_id,
+            function_choice_behavior=FunctionChoiceBehavior.Auto(
+                options=FunctionChoiceBehaviorOptions(
+                    allow_concurrent_invocation=True,  # Enable parallel execution
+                    allow_parallel_calls=True  # AI can select multiple functions
+                )
+            ),
+            max_tokens=300,
+            temperature=0.3
+        )
+        
+        history = ChatHistory()
+        history.add_system_message(
+            "You are a data analyst with access to math and data processing tools. "
+            "Use appropriate functions to provide accurate analysis."
+        )
+        history.add_user_message(
+            "Analyze this dataset: 15,22,18,30,25,19,28,33,21,26. "
+            "Calculate the mean and median, then extract the 'revenue' field from this JSON: "
+            '{"revenue": 150000, "profit": 45000, "year": 2024}'
+        )
+        
+        response = await self.chat_service.get_chat_message_content(
+            chat_history=history, settings=settings, kernel=self.kernel
+        )
+        print(f"  ✅ AUTO Response: {response.content}")
+        return response
+    
+    async def demonstrate_required_behavior(self):
+        """REQUIRED: Guaranteed function usage - forces specific tools"""
+        print("\n🎯 REQUIRED Function Choice Behavior")
+        
+        # Force specific functions to be used
+        required_functions = [
+            self.kernel.plugins["AdvancedMath"]["CalculateStatistics"],
+            self.kernel.plugins["EnterpriseData"]["ProcessJsonAdvanced"]
+        ]
+        
+        settings = AzureChatPromptExecutionSettings(
+            service_id=self.service_id,
+            function_choice_behavior=FunctionChoiceBehavior.Required(
+                functions=required_functions,
+                options=FunctionChoiceBehaviorOptions(
+                    allow_concurrent_invocation=True,
+                    allow_parallel_calls=False  # Sequential execution for reliability
+                )
+            ),
+            max_tokens=300,
+            temperature=0.2
+        )
+        
+        history = ChatHistory()
+        history.add_system_message(
+            "You MUST use the specified functions to process the user's request. "
+            "Use statistical analysis and JSON processing as required."
+        )
+        history.add_user_message(
+            "Process sales data: 100,120,95,130,110,105,125,140,115,135 and "
+            "extract customer info from: {\"customer\": \"Acme Corp\", \"sales\": 125000}"
+        )
+        
+        response = await self.chat_service.get_chat_message_content(
+            chat_history=history, settings=settings, kernel=self.kernel
+        )
+        print(f"  ✅ REQUIRED Response: {response.content}")
+        print("  💡 Notice: AI was forced to use the specified functions")
+        return response
+    
+    async def demonstrate_none_behavior(self):
+        """NONE: Information only - no function execution"""
+        print("\n🚫 NONE Function Choice Behavior")
+        
+        settings = AzureChatPromptExecutionSettings(
+            service_id=self.service_id,
+            function_choice_behavior=FunctionChoiceBehavior.None(),
+            max_tokens=250,
+            temperature=0.7
+        )
+        
+        history = ChatHistory()
+        history.add_system_message(
+            "You can see available functions but cannot call them. "
+            "Explain your analysis approach and what functions you would use."
+        )
+        history.add_user_message(
+            "How would you analyze quarterly sales data: 250000,275000,300000,285000 "
+            "and process this customer record: {\"id\": 1001, \"name\": \"TechCorp\"}?"
+        )
+        
+        response = await self.chat_service.get_chat_message_content(
+            chat_history=history, settings=settings, kernel=self.kernel
+        )
+        print(f"  ✅ NONE Response: {response.content}")
+        print("  💡 Notice: AI explains approach but cannot execute functions")
+        return response
+    
+    async def demonstrate_selective_control(self):
+        """Selective: Fine-grained function access control"""
+        print("\n🎛️ Selective Function Control")
+        
+        # Only allow math functions for this financial analysis context
+        math_only_functions = [
+            self.kernel.plugins["AdvancedMath"]["CalculateStatistics"],
+            self.kernel.plugins["AdvancedMath"]["GenerateSecureRandom"]
+        ]
+        
+        settings = AzureChatPromptExecutionSettings(
+            service_id=self.service_id,
+            function_choice_behavior=FunctionChoiceBehavior.Auto(
+                functions=math_only_functions,
+                options=FunctionChoiceBehaviorOptions(
+                    allow_concurrent_invocation=False,  # Sequential for precision
+                    allow_parallel_calls=False
+                )
+            ),
+            max_tokens=250,
+            temperature=0.4
+        )
+        
+        history = ChatHistory()
+        history.add_system_message(
+            "You are a financial analyst with access to mathematical tools only. "
+            "Focus on statistical analysis and numerical computations."
+        )
+        history.add_user_message(
+            "Analyze investment returns: 8.5,12.3,6.7,15.2,9.8,11.4,7.9,13.6 "
+            "Also process this JSON data: {\"portfolio\": \"aggressive\", \"risk\": \"high\"} "
+            "Generate a random portfolio ID between 1000-9999."
+        )
+        
+        response = await self.chat_service.get_chat_message_content(
+            chat_history=history, settings=settings, kernel=self.kernel
+        )
+        print(f"  ✅ Selective Response: {response.content}")
+        print("  💡 Notice: Only math functions available, JSON request handled differently")
+        return response
+
+# Execute advanced function calling demonstrations
+orchestrator = FunctionCallOrchestrator(kernel, "azure_chat")
+
+print("🎯 Advanced Function Choice Behavior Patterns")
+print("=" * 60)
+
+# Test all behavior patterns
+await orchestrator.demonstrate_auto_behavior()
+await orchestrator.demonstrate_required_behavior() 
+await orchestrator.demonstrate_none_behavior()
+await orchestrator.demonstrate_selective_control()
+
+print(f"\n" + "=" * 60)
+print("✅ Advanced Function Calling Patterns Complete")
+print("\n🏆 Enterprise Benefits:")
+print("  • AUTO: Maximum flexibility for general-purpose applications")
+print("  • REQUIRED: Guaranteed tool usage for critical operations")  
+print("  • NONE: Safe information-only mode for sensitive contexts")
+print("  • Selective: Precise capability control for specialized workflows")
+print("  • Options: Performance tuning with concurrent and parallel execution")
+```
+
+**Production Function Calling Strategies:**
+
+| Behavior | Use Case | Benefits | Considerations |
+|----------|----------|----------|----------------|
+| **AUTO** | General applications | Maximum flexibility, natural interaction | Less predictable function usage |
+| **REQUIRED** | Critical workflows | Guaranteed tool usage, reliable results | May force unnecessary calls |
+| **NONE** | Information gathering | Safe for sensitive contexts, no side effects | Cannot perform actions |
+| **Selective** | Specialized domains | Precise control, security boundaries | Requires careful function curation |
 
 ## 4.7 Production Patterns and Error Handling
 
