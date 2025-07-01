@@ -1,9 +1,21 @@
-# Core AI Framework Dependencies
-langchain-openai>=0.1.0          # LangChain Azure OpenAI integration
-semantic-kernel>=1.0.0           # Microsoft Semantic Kernel
+# Core AI Framework Dependencies (2025 Versions)
+langchain-openai>=0.2.0          # LangChain Azure OpenAI integration
+semantic-kernel>=1.0.0           # Microsoft Semantic Kernel 1.0 GA
 langchain-community>=0.2.0       # LangChain community tools and integrations
-langchain-core>=0.2.0            # LangChain core components
-langchain>=0.2.0                 # LangChain main package
+langchain-core>=0.3.0            # LangChain core components
+langchain>=0.3.26                # LangChain main package (latest 2025)
+
+# 2025 LangGraph Multi-Agent Framework
+langgraph>=0.2.74                # Modern agent framework (replaces AgentExecutor)
+langgraph-checkpoint>=1.0.0      # Memory and state persistence
+
+# 2025 Production Monitoring & Evaluation
+langsmith>=0.1.0                 # Production monitoring and evaluation
+deepeval>=0.21.0                 # Open-source evaluation framework
+mlflow>=2.0.0                    # Experiment tracking and model management
+
+# AutoGen Integration (Optional)
+# semantic-kernel[autogen]>=1.0.0  # Uncomment for AutoGen integration
 
 # Search and Tool Dependencies
 tavily-python>=0.3.0            # Tavily search API for agents

@@ -2,23 +2,24 @@
 
 This repository provides a hands-on, code-first comparison of two leading AI application frameworks: **LangChain** and **Microsoft's Semantic Kernel**. Rather than declaring a winner, this project illuminates each framework's unique strengths and optimal use cases through practical examples and multi-agent implementations.
 
-## 🚀 What's New (2024 Updates)
+## 🚀 What's New (2025 Updates)
 
 > [!NOTE]
-> This project has been completely updated with the latest 2024 patterns and enterprise-ready implementations.
+> This project has been completely updated with the latest 2025 patterns, production frameworks, and comprehensive evaluation tools.
 
-- [x] **Azure OpenAI Integration**: Enterprise-ready examples using Azure OpenAI
-- [x] **Latest Framework Versions**: Updated to LangChain 0.3+ and Semantic Kernel 1.0+
-- [x] **Multi-Agent Systems**: LangGraph vs Semantic Kernel Agent Framework comparisons
-- [x] **Deprecation Fixes**: Modern LCEL patterns replace deprecated LLMChain
-- [x] **Production Patterns**: Environment variable management and security best practices
+- [x] **LangGraph Integration**: Modern agent framework replacing legacy AgentExecutor
+- [x] **LangSmith Monitoring**: Production-ready tracing and evaluation workflows
+- [x] **Semantic Kernel 1.0 GA**: Agent Framework with AutoGen integration patterns
+- [x] **Modern Evaluation**: DeepEval, Humanloop, and MLflow integration examples
+- [x] **Cost Optimization**: Built-in token tracking and performance monitoring
+- [x] **Production Patterns**: Memory-enabled agents with conversation threading
 
 ## 📊 Key Findings
 
-| Framework              | Strengths                                                                                                         | Best For                                                                                                      |
+| Framework              | 2025 Strengths                                                                                                         | Best For                                                                                                      |
 | ---------------------- | ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| **🦜 LangChain**       | • LCEL composition patterns<br>• LangGraph multi-agent workflows<br>• 700+ integrations<br>• Research flexibility | • Rapid prototyping<br>• Complex agent orchestration<br>• Experimental systems<br>• Community-driven projects |
-| **🧠 Semantic Kernel** | • Enterprise patterns<br>• Multi-language support<br>• Agent Framework<br>• Azure integration                     | • Production systems<br>• Microsoft ecosystem<br>• Structured architectures<br>• Enterprise governance        |
+| **🦜 LangChain**       | • LangGraph state management<br>• LangSmith production monitoring<br>• Memory-enabled agents<br>• DeepEval integration | • Complex multi-agent systems<br>• Production monitoring<br>• Evaluation pipelines<br>• Rapid experimentation |
+| **🧠 Semantic Kernel** | • Agent Framework 1.0 GA<br>• Process Framework<br>• AutoGen convergence<br>• Enterprise governance                     | • Structured agent systems<br>• Microsoft ecosystem<br>• Multi-language support<br>• Enterprise compliance        |
 
 ## 🏗️ Project Structure
 
@@ -31,11 +32,11 @@ This repository provides a hands-on, code-first comparison of two leading AI app
 ├── 📁 .vscode/                               # VS Code workspace optimization
 │   ├── 📄 extensions.json                   # Matt Bierner markdown extensions
 │   └── 📄 settings.json                     # Workspace settings
-├── 📁 notebooks/                             # Progressive learning notebooks
-│   ├── 📓 1_exploring_langchain.ipynb       # LangChain fundamentals + LCEL
-│   ├── 📓 2_exploring_semantic_kernel.ipynb # Semantic Kernel fundamentals
-│   ├── 📓 3_langchain_agents_langgraph.ipynb # LangGraph multi-agent systems
-│   └── 📓 4_semantic_kernel_agents.ipynb    # SK Agent Framework patterns
+├── 📁 notebooks/                             # Progressive learning notebooks (2025 Edition)
+│   ├── 📓 1_exploring_langchain.ipynb       # LangChain + LangGraph + LangSmith
+│   ├── 📓 2_exploring_semantic_kernel.ipynb # Semantic Kernel + Agent Framework  
+│   ├── 📓 3_langchain_agents_langgraph.ipynb # Advanced LangGraph multi-agent workflows
+│   └── 📓 4_semantic_kernel_agents.ipynb    # SK Agent Framework + AutoGen patterns
 └── 📁 docs/                                  # Comprehensive documentation
     ├── 📄 1_introduction.md                 # Framework evolution & philosophies
     ├── 📄 2_architectural_components.md     # Component comparison matrix
@@ -52,6 +53,8 @@ This repository provides a hands-on, code-first comparison of two leading AI app
 - Python 3.8+
 - Azure OpenAI resource with deployed models
 - Tavily API key (for search functionality)
+- LangSmith API key (optional, for production monitoring)
+- DeepEval setup (optional, for advanced evaluation)
 
 ### 1. Clone and Setup
 
@@ -73,10 +76,16 @@ cp .env.template .env
 **Required Environment Variables:**
 
 ```env
+# Core Requirements
 AZURE_OPENAI_API_KEY=your_azure_openai_api_key
 AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 AZURE_OPENAI_CHAT_DEPLOYMENT_NAME=gpt-4o-mini
 TAVILY_API_KEY=your_tavily_api_key
+
+# 2025 Production Monitoring (Optional)
+LANGCHAIN_API_KEY=your_langsmith_api_key
+LANGCHAIN_TRACING_V2=true
+LANGCHAIN_PROJECT=YourProjectName
 ```
 
 ### 3. Launch Jupyter
@@ -112,10 +121,16 @@ Open in VS Code and accept the recommended extensions for the best experience.
 Core dependencies include:
 
 ```
+# Core Frameworks (2025 Versions)
 langchain-openai>=0.1.0     # Azure OpenAI integration
-semantic-kernel>=1.0.0      # Microsoft Semantic Kernel
+semantic-kernel>=1.0.0      # Microsoft Semantic Kernel 1.0 GA
 langchain-community>=0.2.0  # Community tools & integrations
+langgraph>=0.2.0            # Modern agent framework
+langsmith>=0.1.0            # Production monitoring & evaluation
+
+# Tools & Utilities
 tavily-python>=0.3.0        # Search functionality
+deepeval>=0.21.0            # Advanced evaluation framework
 python-dotenv>=1.0.0        # Environment management
 ```
 
@@ -137,12 +152,12 @@ graph LR
     E --> J[Error Handling & Scalability]
 ```
 
-### Advanced Patterns Covered
+### Advanced Patterns Covered (2025 Edition)
 
-| Framework              | Core Patterns                             | Advanced Capabilities                                  |
+| Framework              | Core Patterns                             | 2025 Advanced Capabilities                                  |
 | ---------------------- | ----------------------------------------- | ------------------------------------------------------ |
-| **🦜 LangChain**       | LCEL composition, Streaming, Tool binding | LangGraph workflows, State management, Complex routing |
-| **🧠 Semantic Kernel** | Plugin architecture, Kernel orchestration | Agent Framework, Group chat, Enterprise governance     |
+| **🦜 LangChain**       | LangGraph agents, Memory management, Streaming | LangSmith monitoring, DeepEval testing, Cost tracking |
+| **🧠 Semantic Kernel** | Agent Framework 1.0, Process Framework | AutoGen integration, Multi-language orchestration     |
 
 ## 📚 **Documentation Deep Dive**
 
@@ -154,22 +169,23 @@ graph LR
 
 ### **Implementation Guides**
 
-- **[LangChain Patterns](docs/3_langchain_deep_dive.md)**: LCEL, agents, and modern patterns
-- **[Semantic Kernel Patterns](docs/4_semantic_kernel_deep_dive.md)**: Plugins, orchestration, and Azure integration
-- **[Decision Framework](docs/6_conclusion_recommendations.md)**: When to choose which framework
+- **[LangChain Patterns](docs/3_langchain_deep_dive.md)**: LangGraph, LangSmith, and 2025 patterns
+- **[Semantic Kernel Patterns](docs/4_semantic_kernel_deep_dive.md)**: Agent Framework 1.0, Process Framework, AutoGen
+- **[Decision Framework](docs/6_conclusion_recommendations.md)**: 2025 framework selection criteria
 
 ## 🎯 **Making the Right Choice**
 
-### Decision Matrix
+### Decision Matrix (2025 Edition)
 
-| Use Case                          | LangChain       | Semantic Kernel      |
-| --------------------------------- | --------------- | -------------------- |
-| **🔬 Research & Experimentation** | ✅ Ideal        | ⚠️ Possible          |
-| **⚡ Rapid Prototyping**          | ✅ Excellent    | ⚠️ Structured        |
-| **🏢 Enterprise Production**      | ⚠️ Custom setup | ✅ Built-in          |
-| **🌐 Multi-Language Support**     | ❌ Python focus | ✅ C#/Java/Python    |
-| **🔗 Community Integrations**     | ✅ 700+ tools   | ⚠️ Microsoft-focused |
-| **🛡️ Enterprise Governance**      | ⚠️ Custom impl. | ✅ Built-in          |
+| Use Case                          | LangChain 2025       | Semantic Kernel 2025      |
+| --------------------------------- | ------------------- | ------------------------- |
+| **🔬 Research & Experimentation** | ✅ LangGraph + Smith | ⚠️ Structured approach    |
+| **⚡ Rapid Prototyping**          | ✅ Memory + Streaming| ⚠️ Agent Framework setup  |
+| **🏢 Enterprise Production**      | ✅ LangSmith ready  | ✅ Built-in governance    |
+| **🌐 Multi-Language Support**     | ❌ Python focus    | ✅ C#/Java/Python        |
+| **📊 Evaluation & Monitoring**    | ✅ DeepEval + Smith | ⚠️ Custom solutions       |
+| **🤖 Multi-Agent Systems**        | ✅ LangGraph native | ✅ AutoGen integration    |
+| **💰 Cost Optimization**          | ✅ Built-in tracking| ⚠️ Manual implementation  |
 
 > [!IMPORTANT]
 > Both frameworks can deliver production-ready applications - the choice depends on organizational context and requirements.
@@ -229,10 +245,11 @@ graph LR
 
 ## 📈 **Project Evolution**
 
-This comparison project reflects the latest developments in both frameworks:
+This comparison project reflects the latest 2025 developments in both frameworks:
 
-- **LangChain 0.3+**: LCEL patterns, LangGraph multi-agent systems
-- **Semantic Kernel 1.0+**: Agent Framework, Azure integration improvements
-- **Azure OpenAI**: Enterprise-ready patterns and best practices
+- **LangChain 2025**: LangGraph state management, LangSmith production monitoring, memory-enabled agents
+- **Semantic Kernel 1.0 GA**: Agent Framework, Process Framework, AutoGen convergence patterns
+- **Modern Evaluation**: DeepEval integration, cost tracking, comprehensive testing frameworks
+- **Production Readiness**: Built-in monitoring, evaluation pipelines, enterprise governance
 
-The goal is to provide developers with practical, hands-on experience to make informed architecture decisions based on real-world use cases and requirements.
+The goal is to provide developers with practical, hands-on experience using the most current patterns to make informed architecture decisions for 2025 and beyond.
